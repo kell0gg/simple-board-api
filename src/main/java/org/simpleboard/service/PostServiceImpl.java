@@ -1,5 +1,6 @@
 package org.simpleboard.service;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.simpleboard.dto.PageRequestDTO;
@@ -20,13 +21,14 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 	private final PostRepository repositroy;
+	private static Long totalPage = 1L;
 
 	@Override
 	public PostDTO register(PostDTO dto) {
 		log.info("post registered");
 		Post entity = dtoToEntity(dto);
 		repositroy.save(entity);
-		// return entity.getPno();
+//		 return entity.getPno();
 		return dto;
 	}
 
@@ -36,12 +38,18 @@ public class PostServiceImpl implements PostService {
 		Page<Post> result = repositroy.findAll(pageable);
 		Function<Post, PostDTO> fn = (entity -> entityToDto(entity));
 
+		totalPage = Long.valueOf(result.getTotalPages());
 		return new PageResultDTO<>(result, fn);
 	}
 
 	@Override
-	public Long getTotalPage(PageRequestDTO requestDTO) {
-		Pageable pageable = requestDTO.getPageable(Sort.by("pno").descending());
-		return Long.valueOf((long) pageable.getPageSize());
+	public Long getTotalPage() {
+		return totalPage;
+	}
+
+	@Override
+	public PostDTO read(Long pno) {
+		Optional<Post> result = repositroy.findById(pno);
+		return result.isPresent() ? entityToDto(result.get()) : null;
 	}
 }

@@ -13,15 +13,19 @@ class PostRepositoryTest {
 	@Autowired
 	private PostRepository postRepository;
 
-	// @Test
+	@Test
 	public void insertTestData() {
-		IntStream.range(0, 11).forEach(i -> {
-			Post post = Post.builder().title("TestTitle_" + i).content("Content_" + i).writer("writer_" + i).build();
+		IntStream.range(0, 50).forEach(i -> {
+			Post post = Post.builder().title("TestTitle_" + i).content(
+					"CONTENT@@@@@@@@@@@@@@@@@@@@@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@@@@@"
+							+ i)
+					.writer("writer_" + i).build();
+			System.out.println(post.getContent());
 			System.out.println(postRepository.save(post));
 		});
 	}
 
-	@Test
+	// @Test
 	public void updateTest() {
 		Optional<Post> result = postRepository.findById(25L);
 		if (result.isPresent()) {

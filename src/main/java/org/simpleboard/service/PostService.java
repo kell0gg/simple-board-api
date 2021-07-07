@@ -7,10 +7,12 @@ import org.simpleboard.entity.Post;
 
 public interface PostService {
 	PostDTO register(PostDTO dto);
+	
+	PostDTO read(Long pno);
 
 	PageResultDTO<PostDTO, Post> getList(PageRequestDTO requestDTO);
 	
-	Long getTotalPage(PageRequestDTO requestDTO);
+	Long getTotalPage();
 
 	default Post dtoToEntity(PostDTO dto) {
 		Post entity = Post.builder().pno(dto.getPno()).title(dto.getTitle()).content(dto.getContent())

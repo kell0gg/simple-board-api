@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,9 +33,20 @@ public class PostController {
 		return "hello";
 	}
 
+	@GetMapping("/post/{id}")
+	public ResponseEntity<PostDTO> getPostById(@PathVariable("id") Long id) {
+		PostDTO postDto = service.read(id);
+		if (postDto != null) {
+			return new ResponseEntity<>(postDto, HttpStatus.OK);
+
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
 	@GetMapping("/posts/size")
-	public ResponseEntity<Long> getTotalSize(PageRequestDTO pageRequestDTO) {
-		Long totalPage = service.getTotalPage(pageRequestDTO);
+	public ResponseEntity<Long> getTotalSize() {
+		Long totalPage = service.getTotalPage();
 		log.info("totalPage ====>" + totalPage);
 		return new ResponseEntity<>(totalPage, HttpStatus.OK);
 	}
