@@ -3,16 +3,19 @@ package org.simpleboard.service;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.aspectj.apache.bcel.Repository;
 import org.simpleboard.dto.PageRequestDTO;
 import org.simpleboard.dto.PageResultDTO;
 import org.simpleboard.dto.PostDTO;
 import org.simpleboard.entity.Post;
+import org.simpleboard.entity.QPost;
 import org.simpleboard.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,7 +39,10 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PageResultDTO<PostDTO, Post> getList(PageRequestDTO requestDTO) {
 		Pageable pageable = requestDTO.getPageable(Sort.by("pno").descending());
-		Page<Post> result = repository.findAll(pageable);
+
+		BooleanBuilder booleanBuilder = searchPost(requestDTO);
+
+		Page<Post> result = repository.findAll(booleanBuilder, pageable);
 		Function<Post, PostDTO> fn = (entity -> entityToDto(entity));
 
 		totalPage = Long.valueOf(result.getTotalPages());
@@ -72,5 +78,35 @@ public class PostServiceImpl implements PostService {
 		} else {
 			return null;
 		}
+	}
+
+	private BooleanBuilder searchPost(PageRequestDTO requestDTO) {
+		String type = requestDTO.getType();
+		String keyword = requestDTO.getKeyword();
+
+		BooleanBuilder booleanBuilder = new BooleanBuilder();
+		QPost qPost = QPost.post;
+
+		BooleanExpression expression = qPost.pno.gt(0L);
+		booleanBuilder.and(expression);
+
+		if (type == null || type.trim().length() == 0) {
+			return booleanBuilder;
+		}
+
+		BooleanBuilder condition = new BooleanBuilder();
+
+		if (type.equals("title")) {
+			condition.or(qPost.title.contains(keyword));
+		}
+		if (type.equals("writer")) {
+			condition.or(qPost.writer.contains(keyword));
+		}
+		if (type.equals("content")) {
+			condition.or(qPost.content.contains(keyword));
+		}
+
+		booleanBuilder.and(condition);
+		return booleanBuilder;
 	}
 }

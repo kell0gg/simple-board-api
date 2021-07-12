@@ -30,7 +30,7 @@ class PostServiceImplTest {
 		}
 	}
 
-	@Test
+	// @Test
 	public void testPage() {
 		PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(1).size(10).build();
 		PageResultDTO<PostDTO, Post> resultDTO = service.getList(pageRequestDTO);
@@ -46,5 +46,15 @@ class PostServiceImplTest {
 
 		System.out.println("----------------------------");
 		resultDTO.getPageList().forEach(i -> System.out.println(i));
+	}
+
+	@Test
+	public void testSearch() {
+		PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(1).size(10).type("tc").keyword("@").build();
+		PageResultDTO<PostDTO, Post> result = service.getList(pageRequestDTO);
+
+		result.getDtoList().forEach(a -> {
+			System.out.println(a);
+		});
 	}
 }
