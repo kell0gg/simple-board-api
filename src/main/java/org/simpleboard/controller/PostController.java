@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -67,7 +68,6 @@ public class PostController {
 	@PostMapping("/register")
 	public ResponseEntity<PostDTO> registerPost(@RequestBody PostDTO dto) {
 		log.info("regsiter post");
-		log.info(dto.getContent());
 		try {
 			service.register(dto);
 			return new ResponseEntity<>(dto, HttpStatus.CREATED);
@@ -76,4 +76,30 @@ public class PostController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@PutMapping("/post/update/{id}")
+	public ResponseEntity<PostDTO> updatePost(@PathVariable("id") Long id, @RequestBody PostDTO dto) {
+		dto.setPno(id);
+		PostDTO result = service.modify(dto);
+		if (result != null) {
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+//	@PutMapping("/tutorials/{id}")
+//	public ResponseEntity<Tutorial> updateTutorial(@PathVariable("id") long id, @RequestBody Tutorial tutorial) {
+//		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
+//
+//		if (tutorialData.isPresent()) {
+//			Tutorial _tutorial = tutorialData.get();
+//			_tutorial.setTitle(tutorial.getTitle());
+//			_tutorial.setDescription(tutorial.getDescription());
+//			_tutorial.setPublished(tutorial.isPublished());
+//			return new ResponseEntity<>(tutorialRepository.save(_tutorial), HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//		}
+//	}
 }

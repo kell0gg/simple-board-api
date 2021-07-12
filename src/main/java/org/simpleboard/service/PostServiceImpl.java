@@ -21,14 +21,14 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 	private final PostRepository repositroy;
-	private static Long totalPage = 1L;
+	private Long totalPage = 0L;
 
 	@Override
 	public PostDTO register(PostDTO dto) {
 		log.info("post registered");
 		Post entity = dtoToEntity(dto);
 		repositroy.save(entity);
-//		 return entity.getPno();
+		dto.setPno(entity.getPno());
 		return dto;
 	}
 
@@ -51,5 +51,25 @@ public class PostServiceImpl implements PostService {
 	public PostDTO read(Long pno) {
 		Optional<Post> result = repositroy.findById(pno);
 		return result.isPresent() ? entityToDto(result.get()) : null;
+	}
+
+	@Override
+	public void remove(Long pno) {
+		log.info("delete post");
+		repositroy.deleteById(pno);
+	}
+
+	@Override
+	public PostDTO modify(PostDTO dto) {
+		Optional<Post> result = repositroy.findById(dto.getPno());
+		if (result.isPresent()) {
+			Post entity = result.get();
+			entity.changeContent(dto.getContent());
+			entity.changeTitle(dto.getTitle());
+			repositroy.save(entity);
+			return entityToDto(entity);
+		} else {
+			return null;
+		}
 	}
 }

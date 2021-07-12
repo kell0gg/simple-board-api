@@ -9,6 +9,10 @@ public interface PostService {
 	PostDTO register(PostDTO dto);
 	
 	PostDTO read(Long pno);
+	
+	void remove(Long pno);
+	
+	PostDTO modify(PostDTO dto);
 
 	PageResultDTO<PostDTO, Post> getList(PageRequestDTO requestDTO);
 	

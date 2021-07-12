@@ -15,7 +15,7 @@ class PostRepositoryTest {
 
 	@Test
 	public void insertTestData() {
-		IntStream.range(0, 50).forEach(i -> {
+		IntStream.range(0, 5000).forEach(i -> {
 			Post post = Post.builder().title("TestTitle_" + i).content(
 					"CONTENT@@@@@@@@@@@@@@@@@@@@@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@CONTENT@@@@@@@@@@@@"
 							+ i)
