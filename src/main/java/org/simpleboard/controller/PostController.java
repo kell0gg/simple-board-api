@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,11 +81,25 @@ public class PostController {
 	@PutMapping("/post/update/{id}")
 	public ResponseEntity<PostDTO> updatePost(@PathVariable("id") Long id, @RequestBody PostDTO dto) {
 		dto.setPno(id);
-		PostDTO result = service.modify(dto);
-		if (result != null) {
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		try {
+			PostDTO result = service.modify(dto);
+			if (result != null) {
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@DeleteMapping("/post/delete/{id}")
+	public ResponseEntity<HttpStatus> deletePost(@PathVariable("id") Long id) {
+		try {
+			service.remove(id);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

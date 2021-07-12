@@ -3,6 +3,7 @@ package org.simpleboard.service;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.aspectj.apache.bcel.Repository;
 import org.simpleboard.dto.PageRequestDTO;
 import org.simpleboard.dto.PageResultDTO;
 import org.simpleboard.dto.PostDTO;
@@ -20,14 +21,14 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-	private final PostRepository repositroy;
+	private final PostRepository repository;
 	private Long totalPage = 0L;
 
 	@Override
 	public PostDTO register(PostDTO dto) {
 		log.info("post registered");
 		Post entity = dtoToEntity(dto);
-		repositroy.save(entity);
+		repository.save(entity);
 		dto.setPno(entity.getPno());
 		return dto;
 	}
@@ -35,7 +36,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PageResultDTO<PostDTO, Post> getList(PageRequestDTO requestDTO) {
 		Pageable pageable = requestDTO.getPageable(Sort.by("pno").descending());
-		Page<Post> result = repositroy.findAll(pageable);
+		Page<Post> result = repository.findAll(pageable);
 		Function<Post, PostDTO> fn = (entity -> entityToDto(entity));
 
 		totalPage = Long.valueOf(result.getTotalPages());
@@ -49,24 +50,24 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public PostDTO read(Long pno) {
-		Optional<Post> result = repositroy.findById(pno);
+		Optional<Post> result = repository.findById(pno);
 		return result.isPresent() ? entityToDto(result.get()) : null;
 	}
 
 	@Override
 	public void remove(Long pno) {
 		log.info("delete post");
-		repositroy.deleteById(pno);
+		repository.deleteById(pno);
 	}
 
 	@Override
 	public PostDTO modify(PostDTO dto) {
-		Optional<Post> result = repositroy.findById(dto.getPno());
+		Optional<Post> result = repository.findById(dto.getPno());
 		if (result.isPresent()) {
 			Post entity = result.get();
 			entity.changeContent(dto.getContent());
 			entity.changeTitle(dto.getTitle());
-			repositroy.save(entity);
+			repository.save(entity);
 			return entityToDto(entity);
 		} else {
 			return null;
