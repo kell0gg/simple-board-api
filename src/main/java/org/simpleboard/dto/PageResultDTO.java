@@ -33,12 +33,10 @@ public class PageResultDTO<DTO, EN> {
 		this.page = pageable.getPageNumber() + 1;
 		this.size = pageable.getPageSize();
 
-		int tempEnd = (int) (Math.ceil(page / 10.0)) * 10;
+		int tempEnd = (int) (Math.ceil(page / this.size)) * this.size;
 
-		start = tempEnd - 9;
-		prev = start > 1;
+		start = tempEnd - this.size;
 		end = totalPage > tempEnd ? tempEnd : totalPage;
-		next = totalPage > tempEnd;
 
 		pageList = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
 	}

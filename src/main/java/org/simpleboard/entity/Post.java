@@ -23,10 +23,10 @@ public class Post extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long pno;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 50, nullable = false)
 	private String title;
 
-	@Column(length = 10000, nullable = false)
+	@Column(length = 1000, nullable = false)
 	private String content;
 
 	@Column(length = 15, nullable = false)

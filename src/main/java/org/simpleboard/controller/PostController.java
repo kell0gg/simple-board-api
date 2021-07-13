@@ -49,7 +49,6 @@ public class PostController {
 	@GetMapping("/posts/size")
 	public ResponseEntity<Long> getTotalSize() {
 		Long totalPage = service.getTotalPage();
-		log.info("totalPage ====>" + totalPage);
 		return new ResponseEntity<>(totalPage, HttpStatus.OK);
 	}
 
@@ -66,7 +65,7 @@ public class PostController {
 		}
 	}
 
-	@PostMapping("/register")
+	@PostMapping("/post/register")
 	public ResponseEntity<PostDTO> registerPost(@RequestBody PostDTO dto) {
 		log.info("regsiter post");
 		try {
